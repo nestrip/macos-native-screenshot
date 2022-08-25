@@ -3,6 +3,9 @@
     windows_subsystem = "windows"
 )]
 
+use std::{sync::mpsc::channel, time::Duration};
+
+use notify::{watcher, RecursiveMode, Watcher};
 use tauri::{
     api::notification::Notification, CustomMenuItem, SystemTray, SystemTrayEvent, SystemTrayMenu,
 };
@@ -16,7 +19,7 @@ fn main() {
         .expect("error while running tauri application");
 
     app.set_activation_policy(tauri::ActivationPolicy::Accessory);
-
+    watch_file_system();
     app.run(|_app_handle, event| match event {
         tauri::RunEvent::ExitRequested { api, .. } => {
             api.prevent_exit();
@@ -66,4 +69,28 @@ fn test(app_handle: tauri::AppHandle) {
         .body("World")
         .show()
         .expect("error while showing notification");
+}
+
+fn watch_file_system() {
+    let (tx, rx) = channel();
+    let mut watcher = watcher(tx, Duration::from_secs(10)).unwrap();
+
+    watcher
+        .watch(
+            dirs::home_dir()
+                .expect("Could not get home dir")
+                .to_str()
+                .expect("Not a valid path?")
+                .to_owned()
+                + "/screenshots",
+            RecursiveMode::NonRecursive,
+        )
+        .unwrap();
+
+    loop {
+        match rx.recv() {
+            Ok(event) => println!("{:?}", event),
+            Err(e) => println!("watch error: {:?}", e),
+        }
+    }
 }
