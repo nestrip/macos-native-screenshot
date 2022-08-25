@@ -737,8 +737,16 @@ select {
   display: block;
 }
 
+.flex {
+  display: flex;
+}
+
 .w-full {
   width: 100%;
+}
+
+.flex-col {
+  flex-direction: column;
 }
 
 .rounded {
@@ -776,6 +784,16 @@ select {
 .text-text {
   --tw-text-opacity: 1;
   color: rgb(193 194 197 / var(--tw-text-opacity));
+}
+
+.text-white {
+  --tw-text-opacity: 1;
+  color: rgb(255 255 255 / var(--tw-text-opacity));
+}
+
+.text-primary {
+  --tw-text-opacity: 1;
+  color: rgb(26 27 30 / var(--tw-text-opacity));
 }
 
 .shadow-sm {
