@@ -25,7 +25,14 @@ pub fn watch_file_system() {
                 path: Some(path),
                 op: Ok(op),
                 cookie: _,
-            }) => if op.contains(notify::Op::WRITE) && files::is_image(&path) {},
+            }) => {
+                if op.contains(notify::Op::WRITE)
+                    && files::is_image(&path)
+                    && !op.contains(notify::Op::RENAME)
+                {
+                    files::copy_image_to_clipboard(&path)
+                }
+            }
             Ok(event) => println!("broken event: {:?}", event),
             Err(e) => println!("watch error: {:?}", e),
         }
