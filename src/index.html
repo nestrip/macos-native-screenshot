@@ -1,36 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="stylesheet" href="output.css" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Tauri App</title>
-    <script type="module" src="/main.js" defer></script>
-  </head>
 
-  <body class="bg-primary">
-    <main>
-      <div class="card">
-        <h1 class="text-3xl text-text font-bold">Upload Settings</h1>
+<head>
+  <meta charset="UTF-8" />
+  <link rel="stylesheet" href="output.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tauri App</title>
+  <script type="module" src="/main.js" defer></script>
+</head>
 
-        <div class="w-full">
-          <label for="key" class="block text-sm font-medium text-text">API Key:</label>
-          <div class="mt-1 relative mx-5 rounded shadow-sm">
-            <input class="input" id="key" placeholder="Enter Your API Key"></input>
-          </div>
-        </div>
+<body class="bg-primary">
+  <main>
+    <div class="card">
+      <h1 class="text-3xl text-text font-bold">Upload Settings</h1>
 
-
-        <button class="button bg-red-500 hover:bg-red-600" id="test">Test Upload</button>
-
-        <div class="flex flex-col">
-
-          <div>
-            <input type="checkbox" id="notification"/>
-            <label for="notification" class="text-primary">Show Notification</label>
-          </div>
+      <div class="w-full">
+        <label for="key" class="block text-sm font-medium text-text">API Key:</label>
+        <div class="mt-1 relative mx-5 rounded shadow-sm">
+          <input class="input" id="key" placeholder="Enter Your API Key"></input>
         </div>
       </div>
-    </main>
-  </body>
+
+
+      <button class="button bg-red-500 hover:bg-red-600" id="test">Test Upload</button>
+    </div>
+  </main>
+</body>
+
 </html>
