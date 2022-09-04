@@ -2,10 +2,7 @@ use arboard::{Clipboard, ImageData};
 use image::io::Reader as ImageReader;
 use std::{borrow::Cow, path::Path};
 
-use crate::upload;
-
 pub fn copy_image_to_clipboard(path: &Path) {
-    println!("copying image to clipboard {}", path.display());
     let file = ImageReader::open(path).expect("Could not open image");
 
     let image = file.decode().expect("Could not decode image");
@@ -18,7 +15,6 @@ pub fn copy_image_to_clipboard(path: &Path) {
         bytes: Cow::Borrowed(image.as_bytes()),
     };
     clipboard.set_image(img_date).unwrap();
-    upload::upload_file_to_nest(path);
 }
 
 pub fn is_image(path: &Path) -> bool {
@@ -27,4 +23,8 @@ pub fn is_image(path: &Path) -> bool {
         "png" | "jpg" | "jpeg" | "gif" | "bmp" | "webp" => true,
         _ => false,
     }
+}
+
+pub fn delete_file(file: &Path) {
+    std::fs::remove_file(file).expect("Could not delete file");
 }

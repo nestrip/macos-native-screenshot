@@ -1,7 +1,7 @@
 use notify::{raw_watcher, RawEvent, RecursiveMode, Watcher};
 use std::sync::mpsc::channel;
 
-use crate::files;
+use crate::{files, upload};
 
 pub fn watch_file_system() {
     let mut last_image = String::new();
@@ -27,14 +27,24 @@ pub fn watch_file_system() {
                 op: Ok(op),
                 cookie: _,
             }) => {
-                if op.contains(notify::Op::WRITE)
+                if !(op.contains(notify::Op::RENAME)
+                    && !path.file_name().unwrap().to_string_lossy().starts_with(".")
                     && files::is_image(&path)
-                    && !op.contains(notify::Op::RENAME)
-                    && last_image != path.to_str().unwrap()
+                    && last_image != path.to_str().unwrap())
                 {
-                    last_image = path.to_str().unwrap().to_owned();
-                    files::copy_image_to_clipboard(&path);
+                    continue;
                 }
+
+                last_image = path.to_str().unwrap().to_owned();
+
+                // copy the image to the clipboard, just incase the request fails
+                files::copy_image_to_clipboard(&path);
+
+                // upload the image to nest
+                upload::upload_file_to_nest(&path);
+
+                // delete the file from the file system to prevent any unneeded files
+                files::delete_file(&path);
             }
             Ok(event) => println!("broken event: {:?}", event),
             Err(e) => println!("watch error: {:?}", e),
