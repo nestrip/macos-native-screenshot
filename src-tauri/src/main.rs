@@ -5,6 +5,7 @@
 
 mod files;
 mod listeners;
+mod upload;
 
 use std::thread;
 

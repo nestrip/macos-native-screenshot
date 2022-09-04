@@ -4,6 +4,7 @@ use std::sync::mpsc::channel;
 use crate::files;
 
 pub fn watch_file_system() {
+    let mut last_image = String::new();
     let (tx, rx) = channel();
     let mut watcher = raw_watcher(tx).unwrap();
 
@@ -29,8 +30,10 @@ pub fn watch_file_system() {
                 if op.contains(notify::Op::WRITE)
                     && files::is_image(&path)
                     && !op.contains(notify::Op::RENAME)
+                    && last_image != path.to_str().unwrap()
                 {
-                    files::copy_image_to_clipboard(&path)
+                    last_image = path.to_str().unwrap().to_owned();
+                    files::copy_image_to_clipboard(&path);
                 }
             }
             Ok(event) => println!("broken event: {:?}", event),

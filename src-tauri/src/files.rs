@@ -2,12 +2,13 @@ use arboard::{Clipboard, ImageData};
 use image::io::Reader as ImageReader;
 use std::{borrow::Cow, path::Path};
 
-pub fn copy_image_to_clipboard(image: &Path) {
-    println!("copying image to clipboard {}", image.display());
-    let image = ImageReader::open(image)
-        .expect("Could not open image")
-        .decode()
-        .expect("Could not decode image");
+use crate::upload;
+
+pub fn copy_image_to_clipboard(path: &Path) {
+    println!("copying image to clipboard {}", path.display());
+    let file = ImageReader::open(path).expect("Could not open image");
+
+    let image = file.decode().expect("Could not decode image");
 
     let mut clipboard = Clipboard::new().unwrap();
 
@@ -17,6 +18,7 @@ pub fn copy_image_to_clipboard(image: &Path) {
         bytes: Cow::Borrowed(image.as_bytes()),
     };
     clipboard.set_image(img_date).unwrap();
+    upload::upload_file_to_nest(path);
 }
 
 pub fn is_image(path: &Path) -> bool {
