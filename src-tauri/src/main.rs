@@ -3,21 +3,19 @@
     windows_subsystem = "windows"
 )]
 
+mod config;
 mod files;
 mod listeners;
 mod upload;
 
 use std::thread;
 
-use tauri::{
-    api::notification::Notification, CustomMenuItem, SystemTray, SystemTrayEvent, SystemTrayMenu,
-};
+use tauri::{CustomMenuItem, SystemTray, SystemTrayEvent, SystemTrayMenu};
 
 fn main() {
     let mut app = tauri::Builder::default()
         .system_tray(get_system_tray())
         .on_system_tray_event(handle_tray_click)
-        .invoke_handler(tauri::generate_handler![test])
         .build(tauri::generate_context!())
         .expect("error while running tauri application");
 
@@ -67,13 +65,4 @@ fn handle_tray_click(app: &tauri::AppHandle, event: tauri::SystemTrayEvent) {
         },
         _ => {}
     }
-}
-
-#[tauri::command]
-fn test(app_handle: tauri::AppHandle) {
-    Notification::new(&app_handle.config().tauri.bundle.identifier)
-        .title("Hello")
-        .body("World")
-        .show()
-        .expect("error while showing notification");
 }

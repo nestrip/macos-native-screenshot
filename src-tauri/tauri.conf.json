@@ -7,8 +7,8 @@
     "withGlobalTauri": true
   },
   "package": {
-    "productName": "MacOs screenshot tool",
-    "version": "0.0.0"
+    "productName": "Screenshot Uploader",
+    "version": "1.0.0"
   },
   "tauri": {
     "allowlist": {

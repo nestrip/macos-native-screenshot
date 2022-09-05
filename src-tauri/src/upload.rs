@@ -6,6 +6,7 @@ use reqwest::blocking::{
     Client,
 };
 use serde::Deserialize;
+use tauri::api::notification::Notification;
 
 pub fn upload_file_to_nest(file: &Path) {
     let replaced_path = file.as_os_str().to_string_lossy().replace("/.", "/"); //Macos removes the . from the file name
@@ -23,6 +24,12 @@ pub fn upload_file_to_nest(file: &Path) {
     let response = data.json::<UploadResponse>().unwrap();
     let mut clipboard = Clipboard::new().unwrap();
     clipboard.set_text(response.fileURL).unwrap();
+
+    Notification::new("rip.nest.screenshot")
+        .title("Hello")
+        .body("World")
+        .show()
+        .expect("error while showing notification");
 }
 
 #[allow(dead_code, non_snake_case)]
