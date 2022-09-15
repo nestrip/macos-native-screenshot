@@ -3,26 +3,32 @@
     windows_subsystem = "windows"
 )]
 
+mod commands;
 mod config;
 mod files;
 mod listeners;
 mod upload;
 
 use std::thread;
-
 use tauri::{CustomMenuItem, SystemTray, SystemTrayEvent, SystemTrayMenu};
 
 fn main() {
     let mut app = tauri::Builder::default()
         .system_tray(get_system_tray())
         .on_system_tray_event(handle_tray_click)
+        .invoke_handler(tauri::generate_handler![
+            commands::get_api_key,
+            commands::set_api_key
+        ])
         .build(tauri::generate_context!())
         .expect("error while running tauri application");
 
     app.set_activation_policy(tauri::ActivationPolicy::Accessory);
 
-    thread::spawn(|| {
-        listeners::watch_file_system();
+    let app_handle = app.handle();
+
+    thread::spawn(move || {
+        listeners::watch_file_system(&app_handle);
     });
 
     app.run(|_app_handle, event| match event {

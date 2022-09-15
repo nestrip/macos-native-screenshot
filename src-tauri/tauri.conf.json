@@ -32,7 +32,7 @@
         "providerShortName": null,
         "signingIdentity": null
       },
-      "resources": [],
+      "resources": ["sounds/*"],
       "shortDescription": "Simple Screenshot Tool",
       "targets": "all",
       "windows": {

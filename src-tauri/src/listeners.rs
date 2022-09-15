@@ -3,7 +3,7 @@ use std::sync::mpsc::channel;
 
 use crate::{files, upload};
 
-pub fn watch_file_system() {
+pub fn watch_file_system(app: &tauri::AppHandle) {
     let mut last_image = String::new();
     let (tx, rx) = channel();
     let mut watcher = raw_watcher(tx).unwrap();
@@ -41,7 +41,7 @@ pub fn watch_file_system() {
                 files::copy_image_to_clipboard(&path);
 
                 // upload the image to nest
-                upload::upload_file_to_nest(&path);
+                upload::upload_file_to_nest(&path, &app);
 
                 // delete the file from the file system to prevent any unneeded files
                 files::delete_file(&path);

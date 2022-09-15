@@ -1,6 +1,7 @@
 use arboard::{Clipboard, ImageData};
 use image::io::Reader as ImageReader;
-use std::{borrow::Cow, path::Path};
+use rodio::{Decoder, OutputStream, Source};
+use std::{borrow::Cow, fs::File, io::BufReader, path::Path};
 
 pub fn copy_image_to_clipboard(path: &Path) {
     let file = ImageReader::open(path).expect("Could not open image");
@@ -27,4 +28,23 @@ pub fn is_image(path: &Path) -> bool {
 
 pub fn delete_file(file: &Path) {
     std::fs::remove_file(file).expect("Could not delete file");
+}
+
+pub fn play_audio_file(app_handle: &tauri::AppHandle, file: &str) {
+    let (_stream, stream_handle) = OutputStream::try_default().unwrap();
+    let file = BufReader::new(
+        File::open(
+            app_handle
+                .path_resolver()
+                .resolve_resource(file)
+                .expect("Could not find sound file")
+                .as_path(),
+        )
+        .unwrap(),
+    );
+
+    let source = Decoder::new(file).unwrap();
+    stream_handle.play_raw(source.convert_samples()).unwrap();
+
+    std::thread::sleep(std::time::Duration::from_secs(1));
 }
