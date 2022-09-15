@@ -45,11 +45,12 @@ pub fn upload_file_to_nest(file: &Path, app_handle: &tauri::AppHandle) {
     if data.status() != 200 {
         files::play_audio_file(app_handle, "sounds/error.wav");
         let response = data.json::<ErrorResponse>().unwrap();
-        display_error_message(app_handle, response);
+        println!("Error uploading file to nest:  {}", response.message);
+
+        display_error_message(app_handle, &response);
         return;
     }
 
-    display_successfull_notification(app_handle, path);
     files::play_audio_file(app_handle, "sounds/upload.wav");
 
     let response = data
@@ -57,6 +58,8 @@ pub fn upload_file_to_nest(file: &Path, app_handle: &tauri::AppHandle) {
         .expect("Could not parse upload response");
     let mut clipboard = Clipboard::new().unwrap();
     clipboard.set_text(response.fileURL).unwrap();
+
+    display_successfull_notification(app_handle, path);
 }
 
 fn display_successfull_notification(app_handle: &tauri::AppHandle, path: &Path) {
@@ -70,10 +73,10 @@ fn display_successfull_notification(app_handle: &tauri::AppHandle, path: &Path) 
         .expect("error while showing notification");
 }
 
-fn display_error_message(app_handle: &tauri::AppHandle, response: ErrorResponse) {
+fn display_error_message(app_handle: &tauri::AppHandle, response: &ErrorResponse) {
     Notification::new(app_handle.config().tauri.bundle.identifier.clone())
         .title("Could not upload to nest")
-        .body(response.message)
+        .body(response.message.clone())
         .show()
         .expect("error while showing notification");
 }

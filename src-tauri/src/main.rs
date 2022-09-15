@@ -18,7 +18,8 @@ fn main() {
         .on_system_tray_event(handle_tray_click)
         .invoke_handler(tauri::generate_handler![
             commands::get_api_key,
-            commands::set_api_key
+            commands::set_api_key,
+            commands::test_upload
         ])
         .build(tauri::generate_context!())
         .expect("error while running tauri application");
