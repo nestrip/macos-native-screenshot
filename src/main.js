@@ -14,10 +14,17 @@ window.addEventListener("DOMContentLoaded", () => {
     window.__TAURI__.invoke("test_upload");
   };
 
-  window.__TAURI__.event.listen("WINDOW_CLOSE_REQUESTED", () => {
-    if (apiKey.value == "") {
-      window.__TAURI__.window.close();
-      console.log("Hi");
+  window.__TAURI__.event.listen("tauri://close-requested", () => {
+    // If they have an api key, just close the window
+    if (apiKey.value != "") {
+      window.__TAURI__.window.appWindow.close();
+      return;
     }
+
+    // display a warning about not having an api key
+    window.__TAURI__.dialog.confirm("You don't have an api key.", {
+      title: "No API Key",
+      type: "error",
+    });
   });
 });

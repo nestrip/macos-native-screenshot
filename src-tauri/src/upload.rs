@@ -44,6 +44,7 @@ pub fn upload_file_to_nest(file: &Path, app_handle: &tauri::AppHandle) {
     // Request failed...displaying meswsage to user
     if data.status() != 200 {
         files::play_audio_file(app_handle, "sounds/error.wav");
+
         let response = data.json::<ErrorResponse>().unwrap();
         println!("Error uploading file to nest:  {}", response.message);
 
