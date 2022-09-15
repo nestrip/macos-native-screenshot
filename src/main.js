@@ -10,7 +10,14 @@ window.addEventListener("DOMContentLoaded", () => {
 
   const testButton = document.getElementById("test");
 
-  testButton.onclick = () => {
+  testButton.onclick = async () => {
     window.__TAURI__.invoke("test_upload");
   };
+
+  window.__TAURI__.event.listen("WINDOW_CLOSE_REQUESTED", () => {
+    if (apiKey.value == "") {
+      window.__TAURI__.window.close();
+      console.log("Hi");
+    }
+  });
 });

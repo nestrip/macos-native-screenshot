@@ -59,11 +59,22 @@ fn handle_tray_click(app: &tauri::AppHandle, event: tauri::SystemTrayEvent) {
     match event {
         SystemTrayEvent::MenuItemClick { id, .. } => match id.as_str() {
             "options" => {
-                tauri::WindowBuilder::new(app, "local", tauri::WindowUrl::App("index.html".into()))
-                    .always_on_top(true)
-                    .title("Options Window")
-                    .build()
-                    .expect("error while creating local window");
+                let window = tauri::WindowBuilder::new(
+                    app,
+                    "local",
+                    tauri::WindowUrl::App("index.html".into()),
+                )
+                .always_on_top(true)
+                .title("nest.rip - Options")
+                .build()
+                .expect("error while creating local window");
+
+                window.on_window_event(|event| match event {
+                    tauri::WindowEvent::CloseRequested { api, .. } => {
+                        api.prevent_close();
+                    }
+                    _ => {}
+                });
             }
             "quit" => {
                 std::process::exit(0);
