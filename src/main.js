@@ -22,7 +22,7 @@ window.addEventListener("DOMContentLoaded", () => {
     }
 
     // display a warning about not having an api key
-    window.__TAURI__.dialog.confirm("You don't have an api key.", {
+    window.__TAURI__.dialog.message("You don't have an api key.", {
       title: "No API Key",
       type: "error",
     });
