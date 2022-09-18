@@ -26,10 +26,7 @@ struct ErrorResponse {
 }
 
 pub fn upload_file_to_nest(file: &Path, app_handle: &tauri::AppHandle) -> Result<(), String> {
-    let replaced_path = file.as_os_str().to_string_lossy().replace("/.", "/"); //Macos removes the . from the file name
-    let path = Path::new(&replaced_path);
-
-    println!("Uploading file to nest {}", path.display());
+    println!("Uploading file to nest {}", file.display());
 
     // Load the config to get the users api key
     let config = crate::config::get_config(&app_handle);
@@ -37,7 +34,7 @@ pub fn upload_file_to_nest(file: &Path, app_handle: &tauri::AppHandle) -> Result
     let data = Client::new()
         .post("https://nest.rip/api/files/upload")
         .header("Authorization", config.api_key)
-        .multipart(Form::new().part("files", Part::file(path).unwrap()))
+        .multipart(Form::new().part("files", Part::file(file).unwrap()))
         .send()
         .unwrap();
 
@@ -60,7 +57,7 @@ pub fn upload_file_to_nest(file: &Path, app_handle: &tauri::AppHandle) -> Result
     let mut clipboard = Clipboard::new().unwrap();
     clipboard.set_text(response.fileURL).unwrap();
 
-    display_successfull_notification(app_handle, path);
+    display_successfull_notification(app_handle, file);
     return Ok(());
 }
 
