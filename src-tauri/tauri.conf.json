@@ -2,7 +2,7 @@
   "build": {
     "beforeDevCommand": "",
     "beforeBuildCommand": "",
-    "devPath": "../src",
+    "devPath": "http://127.0.0.1:5500/src/",
     "distDir": "../src",
     "withGlobalTauri": true
   },
@@ -12,7 +12,16 @@
   },
   "tauri": {
     "allowlist": {
-      "all": true
+      "dialog": {
+        "message": true,
+        "confirm": true
+      },
+      "notification": {
+        "all": true
+      },
+      "process": {
+        "relaunch": true
+      }
     },
     "bundle": {
       "active": true,

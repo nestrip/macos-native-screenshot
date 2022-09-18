@@ -19,22 +19,36 @@ fn main() {
         .invoke_handler(tauri::generate_handler![
             commands::get_api_key,
             commands::set_api_key,
-            commands::test_upload
+            commands::test_upload,
+            commands::set_setup,
         ])
         .build(tauri::generate_context!())
         .expect("error while running tauri application");
 
-    app.set_activation_policy(tauri::ActivationPolicy::Accessory);
-
     let app_handle = app.handle();
 
-    thread::spawn(move || {
-        listeners::watch_file_system(&app_handle);
-    });
+    let config = crate::config::get_config(&app_handle);
 
-    app.run(|_app_handle, event| match event {
+    if config.setup {
+        app.set_activation_policy(tauri::ActivationPolicy::Accessory);
+
+        thread::spawn(move || {
+            listeners::watch_file_system(&app_handle);
+        });
+    } else {
+        tauri::WindowBuilder::new(&app, "local", tauri::WindowUrl::App("setup.html".into()))
+            .title("Setup nest.rip uploader")
+            .inner_size(800f64, 400f64)
+            .focus()
+            .build()
+            .expect("Could not start window");
+    }
+
+    app.run(move |_app_handle, event| match event {
         tauri::RunEvent::ExitRequested { api, .. } => {
-            api.prevent_exit();
+            if config.setup {
+                api.prevent_exit();
+            }
         }
         _ => {}
     });

@@ -25,7 +25,7 @@ struct ErrorResponse {
     message: String,
 }
 
-pub fn upload_file_to_nest(file: &Path, app_handle: &tauri::AppHandle) {
+pub fn upload_file_to_nest(file: &Path, app_handle: &tauri::AppHandle) -> Result<(), String> {
     let replaced_path = file.as_os_str().to_string_lossy().replace("/.", "/"); //Macos removes the . from the file name
     let path = Path::new(&replaced_path);
 
@@ -49,7 +49,7 @@ pub fn upload_file_to_nest(file: &Path, app_handle: &tauri::AppHandle) {
         println!("Error uploading file to nest:  {}", response.message);
 
         display_error_message(app_handle, &response);
-        return;
+        return Err(response.message);
     }
 
     files::play_audio_file(app_handle, "sounds/upload.wav");
@@ -61,6 +61,7 @@ pub fn upload_file_to_nest(file: &Path, app_handle: &tauri::AppHandle) {
     clipboard.set_text(response.fileURL).unwrap();
 
     display_successfull_notification(app_handle, path);
+    return Ok(());
 }
 
 fn display_successfull_notification(app_handle: &tauri::AppHandle, path: &Path) {

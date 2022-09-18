@@ -41,10 +41,12 @@ pub fn watch_file_system(app: &tauri::AppHandle) {
                 files::copy_image_to_clipboard(&path);
 
                 // upload the image to nest
-                upload::upload_file_to_nest(&path, &app);
+                let result = upload::upload_file_to_nest(&path, &app);
 
-                // delete the file from the file system to prevent any unneeded files
-                files::delete_file(&path);
+                if result.is_ok() {
+                    // delete the file from the file system to prevent any unneeded files // Only if it actually uploaded
+                    files::delete_file(&path);
+                }
             }
             Ok(event) => println!("broken event: {:?}", event),
             Err(e) => println!("watch error: {:?}", e),
