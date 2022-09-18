@@ -7,7 +7,7 @@
 }
 
 .card {
-  @apply h-max flex items-center justify-center flex-col gap-4 rounded border-[1px] border-[#373a40] bg-secondary py-5 mt-3 mx-4;
+  @apply text-center h-max flex items-center justify-center flex-col gap-4 rounded border-[1px] border-[#373a40] bg-secondary py-5 mt-3 mx-4;
 }
 
 .input {
