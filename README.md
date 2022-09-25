@@ -7,7 +7,7 @@ This uploads screenshots using the native macOS Screenshot tool
 
 ### Setup
 
-1. Download this tool from releases
+1. Download this tool from [Github Releases](https://github.com/nestrip/macos-native-screenshot/releases/latest)
 2. Setup this tool using your nest.rip api key
 3. Set the macos native screenshot location to the "screenshots" folder in your home directory
 4. Screenshots will now auotmatically be uploaded to nest.rip
