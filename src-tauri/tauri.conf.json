@@ -8,7 +8,7 @@
   },
   "package": {
     "productName": "Screenshot Uploader",
-    "version": "1.0.0"
+    "version": "1.0.1"
   },
   "tauri": {
     "allowlist": {
@@ -45,7 +45,7 @@
         "signingIdentity": null
       },
       "resources": ["sounds/*", "images/*"],
-      "shortDescription": "Simple Screenshot Tool",
+      "shortDescription": "nest.rip's screenshot uploader",
       "targets": "all",
       "windows": {
         "certificateThumbprint": null,
