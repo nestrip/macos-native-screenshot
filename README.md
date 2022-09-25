@@ -7,11 +7,12 @@ This uploads screenshots using the native macOS Screenshot tool
 
 ### Setup
 
-1. Download this tool and enter your nest.rip Api Key
-2. Set the macos native screenshot location to the "screenshots" folder in your home directory
-3. Screenshots will now auotmatically be uploaded to nest.rip
+1. Download this tool from releases
+2. Setup this tool using your nest.rip api key
+3. Set the macos native screenshot location to the "screenshots" folder in your home directory
+4. Screenshots will now auotmatically be uploaded to nest.rip
 
-4. (Optional) Use [Shottr](http://shottr.cc) to instantly upload screenshots, without waiting for the macos delay
+5. (Optional) Use [Shottr](http://shottr.cc) to instantly upload screenshots, without waiting for the macos delay
 
 ### Credits
 
