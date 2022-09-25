@@ -14,6 +14,10 @@ This uploads screenshots using the native macOS Screenshot tool
 
 5. (Optional) Use [Shottr](http://shottr.cc) to instantly upload screenshots, without waiting for the macos delay
 
+### Additional information
+
+The tool currently is not automatically started when you boot up macos, so you have to start it manually. This will be fixed in the future.
+
 ### Credits
 
 - ShareX: We are using ShareX' some of sharex's sounds.
