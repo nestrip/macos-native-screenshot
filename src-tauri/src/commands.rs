@@ -1,3 +1,5 @@
+use std::fs;
+
 use crate::upload::upload_file_to_nest;
 
 #[tauri::command]
@@ -22,6 +24,17 @@ pub fn set_setup(app_handle: tauri::AppHandle) {
     config.setup = true;
 
     crate::config::set_config(&app_handle, config);
+
+    // To help the user, create the screenshots folder by default
+    fs::create_dir_all(
+        dirs::home_dir()
+            .expect("Could not get home dir")
+            .to_str()
+            .expect("Not a valid path?")
+            .to_owned()
+            + "/screenshots",
+    )
+    .expect("Failed to create screenshots folder");
 }
 
 #[tauri::command]
