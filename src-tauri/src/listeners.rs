@@ -27,7 +27,7 @@ pub fn watch_file_system(app: &tauri::AppHandle) {
                 op: Ok(op),
                 cookie: _,
             }) => {
-                if !(op.contains(notify::Op::RENAME)
+                if !(op.intersects(notify::Op::CREATE | notify::Op::WRITE | notify::Op::RENAME)
                     && !path.file_name().unwrap().to_string_lossy().starts_with(".")
                     && files::is_image(&path)
                     && last_image != path.to_str().unwrap())
