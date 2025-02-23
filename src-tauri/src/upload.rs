@@ -31,18 +31,30 @@ pub fn upload_file_to_nest(file: &Path, app_handle: &tauri::AppHandle) -> Result
     // Load the config to get the users api key
     let config = crate::config::get_config(&app_handle);
 
-    let data = Client::new()
+    let data = match Client::new()
         .post("https://nest.rip/api/files/upload")
         .header("Authorization", config.api_key)
-        .multipart(Form::new().part("files", Part::file(file).unwrap()))
+        .multipart(Form::new().part("files", Part::file(file).map_err(|e| e.to_string())?))
         .send()
-        .unwrap();
+    {
+        Ok(data) => data,
+        Err(e) => {
+            eprintln!("Error sending request: {}", e);
+            return Err(e.to_string());
+        }
+    };
 
     // Request failed...displaying meswsage to user
     if data.status() != 200 {
         files::play_audio_file(app_handle, "sounds/error.wav");
 
-        let response = data.json::<ErrorResponse>().unwrap();
+        let response = match data.json::<ErrorResponse>() {
+            Ok(response) => response,
+            Err(e) => {
+                eprintln!("Error parsing error response: {}", e);
+                return Err(e.to_string());
+            }
+        };
         println!("Error uploading file to nest:  {}", response.message);
 
         display_error_message(app_handle, &response);
@@ -51,11 +63,24 @@ pub fn upload_file_to_nest(file: &Path, app_handle: &tauri::AppHandle) -> Result
 
     files::play_audio_file(app_handle, "sounds/upload.wav");
 
-    let response = data
-        .json::<UploadResponse>()
-        .expect("Could not parse upload response");
-    let mut clipboard = Clipboard::new().unwrap();
-    clipboard.set_text(response.fileURL).unwrap();
+    let response = match data.json::<UploadResponse>() {
+        Ok(response) => response,
+        Err(e) => {
+            eprintln!("Error parsing upload response: {}", e);
+            return Err(e.to_string());
+        }
+    };
+    let mut clipboard = match Clipboard::new() {
+        Ok(clipboard) => clipboard,
+        Err(e) => {
+            eprintln!("Error creating clipboard: {}", e);
+            return Err(e.to_string());
+        }
+    };
+    if let Err(e) = clipboard.set_text(response.fileURL) {
+        eprintln!("Error setting clipboard text: {}", e);
+        return Err(e.to_string());
+    }
 
     display_successfull_notification(app_handle, file);
     return Ok(());
