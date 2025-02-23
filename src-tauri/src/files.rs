@@ -4,18 +4,51 @@ use rodio::{Decoder, OutputStream, Source};
 use std::{borrow::Cow, fs::File, io::BufReader, path::Path};
 
 pub fn copy_image_to_clipboard(path: &Path) {
-    let file = ImageReader::open(path).expect("Could not open image");
+    let file = match ImageReader::open(path) {
+        Ok(file) => file,
+        Err(e) => {
+            eprintln!("Could not open image: {}", e);
+            return;
+        }
+    };
 
-    let image = file.decode().expect("Could not decode image");
+    let image = match file.decode() {
+        Ok(image) => image,
+        Err(e) => {
+            eprintln!("Could not decode image: {}", e);
+            return;
+        }
+    };
 
-    let mut clipboard = Clipboard::new().unwrap();
+    let mut clipboard = match Clipboard::new() {
+        Ok(clipboard) => clipboard,
+        Err(e) => {
+            eprintln!("Could not create clipboard: {}", e);
+            return;
+        }
+    };
 
-    let img_date = ImageData {
-        width: usize::try_from(image.width()).expect("Could not convert width"),
-        height: usize::try_from(image.height()).expect("Could not convert width"),
+    let img_data = ImageData {
+        width: match usize::try_from(image.width()) {
+            Ok(width) => width,
+            Err(e) => {
+                eprintln!("Could not convert width: {}", e);
+                return;
+            }
+        },
+        height: match usize::try_from(image.height()) {
+            Ok(height) => height,
+            Err(e) => {
+                eprintln!("Could not convert height: {}", e);
+                return;
+            }
+        },
         bytes: Cow::Borrowed(image.as_bytes()),
     };
-    clipboard.set_image(img_date).unwrap();
+
+    if let Err(e) = clipboard.set_image(img_data) {
+        eprintln!("Could not set image to clipboard: {}", e);
+    }
 }
 
 pub fn is_image(path: &Path) -> bool {

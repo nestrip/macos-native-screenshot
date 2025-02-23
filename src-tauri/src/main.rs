@@ -27,7 +27,13 @@ fn main() {
 
     let app_handle = app.handle();
 
-    let config = crate::config::get_config(&app_handle);
+    let config = match crate::config::get_config(&app_handle) {
+        Ok(config) => config,
+        Err(e) => {
+            eprintln!("Error loading config: {}", e);
+            return;
+        }
+    };
 
     if config.setup {
         app.set_activation_policy(tauri::ActivationPolicy::Accessory);
@@ -36,12 +42,14 @@ fn main() {
             listeners::watch_file_system(&app_handle);
         });
     } else {
-        tauri::WindowBuilder::new(&app, "local", tauri::WindowUrl::App("setup.html".into()))
+        if let Err(e) = tauri::WindowBuilder::new(&app, "local", tauri::WindowUrl::App("setup.html".into()))
             .title("Setup nest.rip uploader")
             .inner_size(800f64, 400f64)
             .focus()
-            .build()
-            .expect("Could not start window");
+            .build() {
+                eprintln!("Could not start window: {}", e);
+                return;
+            }
     }
 
     app.run(move |_app_handle, event| match event {
@@ -73,15 +81,20 @@ fn handle_tray_click(app: &tauri::AppHandle, event: tauri::SystemTrayEvent) {
     match event {
         SystemTrayEvent::MenuItemClick { id, .. } => match id.as_str() {
             "options" => {
-                let window = tauri::WindowBuilder::new(
+                let window = match tauri::WindowBuilder::new(
                     app,
                     "local",
                     tauri::WindowUrl::App("index.html".into()),
                 )
                 .always_on_top(true)
                 .title("nest.rip - Options")
-                .build()
-                .expect("error while creating local window");
+                .build() {
+                    Ok(window) => window,
+                    Err(e) => {
+                        eprintln!("Error creating local window: {}", e);
+                        return;
+                    }
+                };
 
                 window.on_window_event(|event| match event {
                     tauri::WindowEvent::CloseRequested { api, .. } => {
