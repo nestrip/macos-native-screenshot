@@ -1,3 +1,6 @@
+> [!WARNING]
+> Deprecated in favor of iShare. Tutorial here: https://youtu.be/rCjFbFOEj1U
+
 # macOS Screenshot Uploader
 
 > This currently only supports the nest.rip host.
